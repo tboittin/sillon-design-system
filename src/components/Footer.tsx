@@ -1,15 +1,11 @@
-import { animated } from '@react-spring/web'
 import { contact, footer, navLinks, siteName, siteTagline } from '../data/content'
 import { ArrowUpRightIcon, FurrowMark, GithubIcon, LinkedinIcon, MailIcon } from '../lib/icons'
-import { useOscillate } from '../hooks'
 
 /* ============================================================================
    Footer — forêt profonde (contraste inversé), marque, navigation, contact.
-   La marque oscille doucement (sillon vivant).
    ========================================================================== */
 
 export function Footer() {
-  const markSpring = useOscillate({ range: 1.5, axis: 'rotate', mass: 0.5 })
   return (
     <footer className="bg-forest-950 text-paper-100">
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
@@ -17,9 +13,7 @@ export function Footer() {
           {/* Marque */}
           <div>
             <a href="#" className="flex items-center gap-2.5" aria-label={`${siteName} — retour à l’accueil`}>
-              <animated.span style={markSpring} className="inline-flex">
-                <FurrowMark className="size-7 text-forest-300" />
-              </animated.span>
+              <FurrowMark className="size-7 text-forest-300" />
               <span className="font-display text-xl font-semibold tracking-tight text-paper-50">{siteName}</span>
             </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper-200/70">{footer.tagline}</p>

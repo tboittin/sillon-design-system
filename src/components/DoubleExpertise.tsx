@@ -1,20 +1,13 @@
-import { animated } from '@react-spring/web'
 import { expertise } from '../data/content'
 import { CheckIcon, iconMap, FurrowMark } from '../lib/icons'
-import { useSlideIn, useOscillate } from '../hooks'
 import { SectionHeader } from './ui/SectionHeader'
 
 /* ============================================================================
    DoubleExpertise — deux colonnes (agronome / développeur) reliées par un
    sillon : la ligne qui traverse et la semence au centre.
-   Les cartes glissent depuis les bords ; la semence oscille doucement.
    ========================================================================== */
 
 export function DoubleExpertise() {
-  const [leftRef, leftSpring] = useSlideIn<HTMLElement>({ y: 32, rootMargin: '-60px' })
-  const [rightRef, rightSpring] = useSlideIn<HTMLElement>({ y: 32, config: { mass: 1, tension: 200, friction: 28 } })
-  const seedSpring = useOscillate({ range: 2.5, axis: 'rotate', mass: 0.6 })
-
   return (
     <section id="expertise" className="scroll-mt-24 bg-surface py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
@@ -22,11 +15,7 @@ export function DoubleExpertise() {
 
         <div className="mt-14 grid items-stretch gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-8">
           {/* Ingénieur agronome */}
-          <animated.article
-            ref={leftRef}
-            style={leftSpring}
-            className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9"
-          >
+          <article className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
             <div className="flex items-center gap-4">
               <span className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
                 {(() => {
@@ -45,23 +34,19 @@ export function DoubleExpertise() {
                 </li>
               ))}
             </ul>
-          </animated.article>
+          </article>
 
           {/* Le sillon connecteur */}
           <div className="flex items-center justify-center md:flex-col" aria-hidden="true">
             <div className="relative h-full w-px bg-line md:h-px md:w-24">
-              <animated.span style={seedSpring} className="absolute left-1/2 top-1/2 flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface">
+              <span className="absolute left-1/2 top-1/2 flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface">
                 <FurrowMark className="size-4 text-accent" />
-              </animated.span>
+              </span>
             </div>
           </div>
 
           {/* Développeur web */}
-          <animated.article
-            ref={rightRef}
-            style={rightSpring}
-            className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9"
-          >
+          <article className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
             <div className="flex items-center gap-4">
               <span className="flex size-12 items-center justify-center rounded-full bg-bark-soft text-bark-600 dark:text-bark-300">
                 {(() => {
@@ -80,7 +65,7 @@ export function DoubleExpertise() {
                 </li>
               ))}
             </ul>
-          </animated.article>
+          </article>
         </div>
 
         <p className="mt-8 text-center font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">

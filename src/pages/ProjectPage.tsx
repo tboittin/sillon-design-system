@@ -1,5 +1,3 @@
-import { animated, useSpring } from '@react-spring/web'
-import { useEffect, useRef, useState } from 'react'
 import type { Project } from '../data/content'
 import { projects } from '../data/content'
 import {
@@ -11,7 +9,6 @@ import {
   ChartBarsIcon,
   FurrowMark,
 } from '../lib/icons'
-import { useSlideIn } from '../hooks'
 import { Breadcrumb } from '../components/ui/Breadcrumb'
 import { FieldFigure } from '../components/FieldFigure'
 import { Metric } from '../components/ui/Metric'
@@ -23,53 +20,30 @@ import { ProjectNav } from '../components/ui/Pagination'
    fil d'Ariane -> en-tête (client, durée) -> grande image -> contexte ->
    objectifs -> solutions techniques -> résultats (métriques + graphique) ->
    outils utilisés -> navigation précédent/suivant.
-   Chaque bloc entre en glissement via React Spring à mesure du scroll.
    ========================================================================== */
 
 interface ChartBarProps {
   data: { label: string; value: number }[]
 }
 
-/* Barre du graphique : échelle verticale animée par ressort */
-function SpringBar({ value, max, delay }: { value: number; max: number; delay: number }) {
-  const spring = useSpring({
-    from: { scaleY: 0 },
-    to: { scaleY: 1 },
-    config: { mass: 0.8, tension: 200, friction: 26 },
-    delay,
-  })
-  return (
-    <animated.div
-      style={{ ...spring, height: `${(value / max) * 100}%`, transformOrigin: 'bottom' }}
-      className="w-full rounded-t-lg bg-gradient-to-t from-accent to-forest-300 transition-all group-hover:opacity-80"
-    />
-  )
-}
-
 function ResultsChart({ data }: ChartBarProps) {
-  /* Le graphique se remplit quand il entre dans le viewport */
-  const [ref, inView] = useInViewOnce()
   const max = Math.max(...data.map((d) => d.value))
-  const bars = data.map((d) => ({ ...d, height: (d.value / max) * 100 }))
-
   return (
     <div className="rounded-2xl border border-line bg-surface-raised p-6 md:p-8">
       <div className="flex items-center gap-2.5">
         <ChartBarsIcon className="size-5 text-accent" />
         <h3 className="font-display text-lg font-medium text-ink">Résultats dans le temps</h3>
       </div>
-      <div
-        ref={ref}
-        className="mt-8 flex h-48 items-end gap-6 px-2 md:gap-10"
-        role="img"
-        aria-label="Graphique des résultats par période"
-      >
-        {bars.map((d, i) => (
+      <div className="mt-8 flex h-48 items-end gap-6 px-2 md:gap-10" role="img" aria-label="Graphique des résultats par période">
+        {data.map((d, i) => (
           <div key={d.label} className="group flex h-full flex-1 flex-col items-center justify-end gap-3">
             <span className="font-mono text-sm tabular-nums text-accent opacity-0 transition-opacity group-hover:opacity-100">
               {d.value}
             </span>
-            {inView && <SpringBar key={d.label} value={d.value} max={max} delay={200 + i * 120} />}
+            <div
+              className="w-full origin-bottom animate-grow-bar rounded-t-lg bg-gradient-to-t from-accent to-forest-300 transition-all group-hover:opacity-80"
+              style={{ height: `${(d.value / max) * 100}%`, animationDelay: `${0.2 + i * 0.12}s` }}
+            />
             <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{d.label}</span>
           </div>
         ))}
@@ -79,28 +53,6 @@ function ResultsChart({ data }: ChartBarProps) {
       </p>
     </div>
   )
-}
-
-/* Observateur d'entrée unique (une fois) — partagé par les blocs de la page */
-function useInViewOnce<T extends HTMLElement = HTMLDivElement>(rootMargin = '-40px') {
-  const ref = useRef<T>(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          observer.unobserve(el)
-        }
-      },
-      { rootMargin },
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [rootMargin])
-  return [ref, inView] as const
 }
 
 export interface ProjectPageProps {
@@ -114,17 +66,10 @@ export function ProjectPage({ slug }: ProjectPageProps) {
   const previous = projects[index - 1]
   const next = projects[index + 1]
 
-  const [headerRef, headerSpring] = useSlideIn<HTMLElement>({ y: 24, rootMargin: '0px' })
-  const [bodyRef, bodySpring] = useSlideIn<HTMLDivElement>({ y: 20 })
-
   return (
     <article className="bg-surface">
       {/* En-tête */}
-      <animated.header
-        ref={headerRef}
-        style={headerSpring}
-        className="border-b border-line bg-surface-sunken pb-12 pt-32 md:pb-16 md:pt-40"
-      >
+      <header className="border-b border-line bg-surface-sunken pb-12 pt-32 md:pb-16 md:pt-40">
         <div className="mx-auto max-w-4xl px-5 md:px-8">
           <Breadcrumb
             items={[
@@ -160,7 +105,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
             </div>
           </dl>
         </div>
-      </animated.header>
+      </header>
 
       {/* Grande image */}
       <figure className="relative">
@@ -170,7 +115,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
         </figcaption>
       </figure>
 
-      <animated.div ref={bodyRef} style={bodySpring} className="mx-auto max-w-4xl px-5 pb-24 pt-6 md:px-8 md:pb-32">
+      <div className="mx-auto max-w-4xl px-5 pb-24 pt-6 md:px-8 md:pb-32">
         {/* Contexte */}
         <section aria-labelledby="contexte">
           <p className="legend text-accent">01 — Contexte</p>
@@ -248,7 +193,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
           <LayersIcon className="size-4" />
           Étude de cas {index + 1} / {projects.length} — Sillon
         </p>
-      </animated.div>
+      </div>
     </article>
   )
 }

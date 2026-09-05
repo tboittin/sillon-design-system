@@ -1,6 +1,8 @@
+import { animated } from '@react-spring/web'
 import { useState, type FormEvent } from 'react'
 import { contact } from '../data/content'
 import { CheckIcon, MailIcon, MapPinIcon, SendIcon } from '../lib/icons'
+import { useSlideIn, useStaggeredSlideIn } from '../hooks'
 import { SectionHeader } from './ui/SectionHeader'
 import { Button } from './ui/Button'
 import { StatusDot } from './ui/Badge'
@@ -8,6 +10,8 @@ import { StatusDot } from './ui/Badge'
 /* ============================================================================
    Contact — formulaire simple (démo, sans backend) + coordonnées.
    Soumission -> état de confirmation inline, sans popup.
+   Entrée staggered pour les coordonnées ; le formulaire glisse depuis la
+   droite quand il apparaît.
    ========================================================================== */
 
 const inputClasses =
@@ -17,11 +21,27 @@ const labelClasses = 'mb-2 block font-mono text-[11px] uppercase tracking-[0.16e
 
 export function Contact() {
   const [sent, setSent] = useState(false)
+  /* Coordonnées : cascade */
+  const [coordsRef, coordsSprings] = useStaggeredSlideIn<HTMLUListElement>(3, {
+    y: 18,
+    stagger: 90,
+    config: { mass: 1, tension: 240, friction: 28 },
+  })
+  /* Formulaire : entrée en glissement */
+  const [formRef, formSpring] = useSlideIn<HTMLDivElement>({ y: 24, config: { mass: 1, tension: 200, friction: 28 } })
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSent(true)
   }
+
+  const contactItems = [
+    <a key="email" href={`mailto:${contact.email}`} className="font-mono text-sm text-ink transition-colors hover:text-accent">
+      {contact.email}
+    </a>,
+    <span key="location" className="text-sm text-ink">{contact.location}</span>,
+    <span key="availability" className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{contact.availability}</span>,
+  ]
 
   return (
     <section id="contact" className="scroll-mt-24 bg-surface-sunken py-24 md:py-32">
@@ -30,30 +50,32 @@ export function Contact() {
         <div>
           <SectionHeader eyebrow={contact.eyebrow} title={contact.title} lead={contact.lead} />
 
-          <ul className="mt-10 flex flex-col gap-5">
-            <li className="flex items-center gap-3.5">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
-                <MailIcon className="size-4.5" />
-              </span>
-              <a href={`mailto:${contact.email}`} className="font-mono text-sm text-ink transition-colors hover:text-accent">
-                {contact.email}
-              </a>
-            </li>
-            <li className="flex items-center gap-3.5">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-bark-soft text-bark-600 dark:text-bark-300">
-                <MapPinIcon className="size-4.5" />
-              </span>
-              <span className="text-sm text-ink">{contact.location}</span>
-            </li>
-            <li className="flex items-center gap-3.5">
-              <StatusDot color="bg-accent" />
-              <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{contact.availability}</span>
-            </li>
+          <ul ref={coordsRef} className="mt-10 flex flex-col gap-5">
+            {[0, 1, 2].map((i) => (
+              <animated.li key={i} style={coordsSprings[i]} className="flex items-center gap-3.5">
+                {i === 0 && (
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
+                    <MailIcon className="size-4.5" />
+                  </span>
+                )}
+                {i === 1 && (
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-bark-soft text-bark-600 dark:text-bark-300">
+                    <MapPinIcon className="size-4.5" />
+                  </span>
+                )}
+                {i === 2 && <StatusDot color="bg-accent" />}
+                {contactItems[i]}
+              </animated.li>
+            ))}
           </ul>
         </div>
 
         {/* Formulaire */}
-        <div className="rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
+        <animated.div
+          ref={formRef}
+          style={formSpring}
+          className="rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9"
+        >
           {sent ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-4 text-center">
               <span className="flex size-14 items-center justify-center rounded-full bg-accent-soft text-accent">
@@ -98,7 +120,7 @@ export function Contact() {
               </Button>
             </form>
           )}
-        </div>
+        </animated.div>
       </div>
     </section>
   )

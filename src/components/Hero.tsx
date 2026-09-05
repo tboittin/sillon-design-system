@@ -1,14 +1,29 @@
+import { animated } from '@react-spring/web'
 import { hero } from '../data/content'
 import { ArrowRightIcon, ChevronDownIcon } from '../lib/icons'
+import { useSlideIn, useStaggeredSlideIn } from '../hooks'
 import { FieldFigure } from './FieldFigure'
 import { Button } from './ui/Button'
 
 /* ============================================================================
    Hero — titre serif pleine largeur sur photographie de terrain assombrie,
    légende documentaire, bandeau de chiffres clés.
+   Entrée staggered par ressort : titre + chapô + CTA, puis les métriques
+   en cascade.
    ========================================================================== */
 
 export function Hero() {
+  /* Bloc titre : un seul ressort pour l'ensemble (eyebrow → CTA) */
+  const [titleRef, titleSpring] = useSlideIn({ y: 28, rootMargin: '0px' })
+  /* Légende + chevron de scroll */
+  const [captionRef, captionSpring] = useSlideIn({ y: 12 })
+  /* Bandeau de métriques en cascade */
+  const [metricsRef, metricsSprings] = useStaggeredSlideIn(hero.metrics.length, {
+    y: 24,
+    stagger: 120,
+    config: { mass: 1, tension: 200, friction: 26 },
+  })
+
   return (
     <section id="accueil" className="relative">
       {/* Photographie de terrain assombrie + grain */}
@@ -18,7 +33,7 @@ export function Hero() {
       </div>
 
       <div className="relative mx-auto flex min-h-[92svh] max-w-6xl flex-col justify-end px-5 pb-10 pt-32 md:px-8 md:pb-14">
-        <div className="max-w-3xl animate-rise">
+        <animated.div ref={titleRef} style={titleSpring} className="max-w-3xl">
           <p className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.22em] text-paper-200/90">
             <span className="h-px w-8 bg-accent" aria-hidden="true" />
             {hero.eyebrow}
@@ -39,10 +54,10 @@ export function Hero() {
               {hero.ctaSecondary}
             </Button>
           </div>
-        </div>
+        </animated.div>
 
         {/* Légende documentaire + indice de scroll */}
-        <div className="mt-12 flex items-end justify-between gap-6">
+        <animated.div ref={captionRef} style={captionSpring} className="mt-12 flex items-end justify-between gap-6">
           <p className="legend text-paper-100/70">{hero.figureCaption}</p>
           <a
             href="#expertise"
@@ -51,19 +66,19 @@ export function Hero() {
           >
             <ChevronDownIcon className="size-6" />
           </a>
-        </div>
+        </animated.div>
       </div>
 
       {/* Bandeau de chiffres clés (sur la surface, hors photo) */}
       <div className="relative border-t border-line bg-surface">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-3 md:px-8 md:py-12">
-          {hero.metrics.map((m) => (
-            <div key={m.label} className="border-l-2 border-accent/40 pl-5">
+        <div ref={metricsRef} className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-3 md:px-8 md:py-12">
+          {hero.metrics.map((m, i) => (
+            <animated.div key={m.label} style={metricsSprings[i]} className="border-l-2 border-accent/40 pl-5">
               <span className="font-mono text-3xl font-semibold tabular-nums tracking-tight text-accent md:text-4xl">
                 {m.value}
               </span>
               <p className="mt-1.5 text-sm leading-snug text-ink-soft">{m.label}</p>
-            </div>
+            </animated.div>
           ))}
         </div>
       </div>

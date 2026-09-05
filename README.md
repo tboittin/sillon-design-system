@@ -66,6 +66,21 @@ src/
 
 Les figures sont des placeholders SVG générés (4 variantes : `field`, `plots`, `macro`, `data`), grain `feTurbulence` + vignette + légende documentaire. **Pour la production, remplacez le SVG par de vraies photographies de terrain** (`<FieldFigure>` accepte déjà n'importe quel contenu via ses props SVG — ou remplacez-le par un `<img>` en conservant `className` et la légende).
 
+## Animations & mouvement
+
+Deux couches complémentaires, sans chevauchement :
+
+- **React Spring** (`@react-spring/web`) — les animations pilotées par la physique, où la sensation de mouvement naturel compte plus que le timing précis : entrées au scroll, cascades, oscillations. Quatre hooks réutilisables dans `src/hooks/` :
+  - `useSlideIn` — apparition d'un bloc (fondu + remontée) quand il entre dans le viewport, une seule fois. Options : `y`, `opacity`, `config` (masse/tension/friction), `rootMargin`, `delay`.
+  - `useStaggeredSlideIn(count)` — cascade d'enfants (métriques clés, cartes de projets, listes). Options : `stagger` (ms entre deux enfants), `config`, `rootMargin`.
+  - `useOscillate` / `useOscillate2D` — balancement continu (feuille qui oscille, semence). Options : `range`, `axis` (`x`|`y`|`rotate`), `mass` ; la 2D combine translation + rotation pour un mouvement naturel.
+  - `useSpringBar(level)` — remplissage de barre par ressort physique (compétences, jauges). Options : `config`, `delay`, `rootMargin`.
+- **Keyframes CSS** (`--animate-*` dans `index.css`) — animations décoratives continues et légères : `float-slow`, `sway`, `sway-rotate`, `drift`, `shimmer`, `pulse-dot`, `spin-slow`. Pour les animations d'entrée ponctuelles, préférez les hooks React Spring.
+
+**Règle d'usage** : React Spring pour tout ce qui réagit au scroll ou aux interactions ; keyframes CSS pour les ambiances permanentes. Respect de `prefers-reduced-motion` à prévoir côté intégration si besoin.
+
+> **Illustrations animées (feuilles, graines, micro-scènes « cute »)** : pour le contenu lui-même (pas son apparition), privilégiez **Rive** ou **Lottie** au lieu d'un SVG animé à la main — fichiers compacts, rendu natif, réutilisables. Rive convient mieux aux scènes vectorielles interactives ; Lottie (via `lottie-react`) aux exports After Effects. Ce design system expose déjà `FieldFigure` qui accepte n'importe quel remplaçant (voir section Images).
+
 ## Récit projet (page d'accueil)
 
 1. **Hero** — « L'agronomie a besoin de meilleurs outils. » (mot clé en italique serif clair), CTA, bandeau `−30 % / 12 structures / 8 ans`.

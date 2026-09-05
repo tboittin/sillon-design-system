@@ -1,10 +1,12 @@
 import { skills } from '../data/content'
 import { iconMap } from '../lib/icons'
 import { SectionHeader } from './ui/SectionHeader'
+import { RevealGroup, RevealItem } from './ui/Reveal'
 
 /* ============================================================================
    Skills — compétences par groupe (agronomie / développement), barres de
    progression animées, pourcentages en monospace.
+   Les groupes se révèlent en cascade au scroll.
    ========================================================================== */
 
 export const skillsSection = {
@@ -19,11 +21,11 @@ export function Skills() {
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeader eyebrow={skillsSection.eyebrow} title={skillsSection.title} lead={skillsSection.lead} />
 
-        <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-14">
+        <RevealGroup as="div" className="mt-14 grid gap-10 md:grid-cols-2 md:gap-14" stagger={0.12}>
           {skills.map((group, gi) => {
             const GroupIcon = iconMap[group.icon]
             return (
-              <div key={group.group}>
+              <RevealItem as="div" key={group.group}>
                 <div className="flex items-center gap-3 border-b border-line pb-4">
                   <span className="flex size-10 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
                     <GroupIcon className="size-5" />
@@ -54,10 +56,10 @@ export function Skills() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </RevealItem>
             )
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   )

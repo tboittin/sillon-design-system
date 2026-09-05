@@ -1,10 +1,12 @@
 import { expertise } from '../data/content'
 import { CheckIcon, iconMap, FurrowMark } from '../lib/icons'
 import { SectionHeader } from './ui/SectionHeader'
+import { Reveal, RevealGroup, RevealItem } from './ui/Reveal'
 
 /* ============================================================================
    DoubleExpertise — deux colonnes (agronome / développeur) reliées par un
    sillon : la ligne qui traverse et la semence au centre.
+   Les cartes se révèlent au scroll, les listes à puces en cascade discrète.
    ========================================================================== */
 
 export function DoubleExpertise() {
@@ -15,7 +17,7 @@ export function DoubleExpertise() {
 
         <div className="mt-14 grid items-stretch gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-8">
           {/* Ingénieur agronome */}
-          <article className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
+          <Reveal as="article" className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
             <div className="flex items-center gap-4">
               <span className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
                 {(() => {
@@ -26,15 +28,15 @@ export function DoubleExpertise() {
               <h3 className="font-display text-2xl font-medium text-ink">{expertise.left.title}</h3>
             </div>
             <p className="mt-5 text-sm leading-relaxed text-ink-soft md:text-base">{expertise.left.description}</p>
-            <ul className="mt-6 flex flex-col gap-3">
+            <RevealGroup as="ul" className="mt-6 flex flex-col gap-3" stagger={0.07}>
               {expertise.left.items.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-snug text-ink">
+                <RevealItem as="li" key={item} className="flex items-start gap-3 text-sm leading-snug text-ink">
                   <CheckIcon className="mt-0.5 size-4 shrink-0 text-accent" />
                   {item}
-                </li>
+                </RevealItem>
               ))}
-            </ul>
-          </article>
+            </RevealGroup>
+          </Reveal>
 
           {/* Le sillon connecteur */}
           <div className="flex items-center justify-center md:flex-col" aria-hidden="true">
@@ -46,7 +48,7 @@ export function DoubleExpertise() {
           </div>
 
           {/* Développeur web */}
-          <article className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
+          <Reveal as="article" className="flex flex-col rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
             <div className="flex items-center gap-4">
               <span className="flex size-12 items-center justify-center rounded-full bg-bark-soft text-bark-600 dark:text-bark-300">
                 {(() => {
@@ -57,15 +59,15 @@ export function DoubleExpertise() {
               <h3 className="font-display text-2xl font-medium text-ink">{expertise.right.title}</h3>
             </div>
             <p className="mt-5 text-sm leading-relaxed text-ink-soft md:text-base">{expertise.right.description}</p>
-            <ul className="mt-6 flex flex-col gap-3">
+            <RevealGroup as="ul" className="mt-6 flex flex-col gap-3" stagger={0.07}>
               {expertise.right.items.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-snug text-ink">
+                <RevealItem as="li" key={item} className="flex items-start gap-3 text-sm leading-snug text-ink">
                   <CheckIcon className="mt-0.5 size-4 shrink-0 text-accent" />
                   {item}
-                </li>
+                </RevealItem>
               ))}
-            </ul>
-          </article>
+            </RevealGroup>
+          </Reveal>
         </div>
 
         <p className="mt-8 text-center font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">

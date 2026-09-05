@@ -1,27 +1,29 @@
 import { contact, footer, navLinks, siteName, siteTagline } from '../data/content'
 import { ArrowUpRightIcon, FurrowMark, GithubIcon, LinkedinIcon, MailIcon } from '../lib/icons'
+import { RevealGroup, RevealItem } from './ui/Reveal'
 
 /* ============================================================================
    Footer — forêt profonde (contraste inversé), marque, navigation, contact.
+   Les trois colonnes se révèlent en cascade douce au scroll.
    ========================================================================== */
 
 export function Footer() {
   return (
     <footer className="bg-forest-950 text-paper-100">
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+        <RevealGroup as="div" className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]" stagger={0.1}>
           {/* Marque */}
-          <div>
+          <RevealItem as="div">
             <a href="#" className="flex items-center gap-2.5" aria-label={`${siteName} — retour à l’accueil`}>
               <FurrowMark className="size-7 text-forest-300" />
               <span className="font-display text-xl font-semibold tracking-tight text-paper-50">{siteName}</span>
             </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper-200/70">{footer.tagline}</p>
             <p className="mt-6 font-mono text-xs uppercase tracking-[0.16em] text-forest-300">{siteTagline}</p>
-          </div>
+          </RevealItem>
 
           {/* Navigation */}
-          <nav aria-label="Navigation pied de page">
+          <RevealItem as="nav" aria-label="Navigation pied de page">
             <h3 className="legend text-forest-300">{footer.navTitle}</h3>
             <ul className="mt-5 flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -37,10 +39,10 @@ export function Footer() {
                 </a>
               </li>
             </ul>
-          </nav>
+          </RevealItem>
 
           {/* Contact & réseaux */}
-          <div>
+          <RevealItem as="div">
             <h3 className="legend text-forest-300">{footer.contactTitle}</h3>
             <ul className="mt-5 flex flex-col gap-3">
               <li>
@@ -66,8 +68,8 @@ export function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
-        </div>
+          </RevealItem>
+        </RevealGroup>
 
         {/* Barre basse */}
         <div className="mt-14 flex flex-col gap-4 border-t border-paper-100/10 pt-7 sm:flex-row sm:items-center sm:justify-between">

@@ -2,10 +2,11 @@ import { hero } from '../data/content'
 import { ArrowRightIcon, ChevronDownIcon } from '../lib/icons'
 import { FieldFigure } from './FieldFigure'
 import { Button } from './ui/Button'
+import { RevealGroup, RevealItem } from './ui/Reveal'
 
 /* ============================================================================
    Hero — titre serif pleine largeur sur photographie de terrain assombrie,
-   légende documentaire, bandeau de chiffres clés.
+   légende documentaire, bandeau de chiffres clés en cascade au scroll.
    ========================================================================== */
 
 export function Hero() {
@@ -56,16 +57,20 @@ export function Hero() {
 
       {/* Bandeau de chiffres clés (sur la surface, hors photo) */}
       <div className="relative border-t border-line bg-surface">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-3 md:px-8 md:py-12">
+        <RevealGroup
+          as="div"
+          className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-3 md:px-8 md:py-12"
+          stagger={0.1}
+        >
           {hero.metrics.map((m) => (
-            <div key={m.label} className="border-l-2 border-accent/40 pl-5">
+            <RevealItem as="div" key={m.label} className="border-l-2 border-accent/40 pl-5">
               <span className="font-mono text-3xl font-semibold tabular-nums tracking-tight text-accent md:text-4xl">
                 {m.value}
               </span>
               <p className="mt-1.5 text-sm leading-snug text-ink-soft">{m.label}</p>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   )

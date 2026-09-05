@@ -2,9 +2,11 @@ import { projects } from '../data/content'
 import { ProjectCard } from './ProjectCard'
 import { SectionHeader } from './ui/SectionHeader'
 import { PagesPagination } from './ui/Pagination'
+import { RevealGroup, RevealItem } from './ui/Reveal'
 
 /* ============================================================================
    ProjectsGrid — projets sélectionnés présentés en études de cas.
+   Les cartes entrent en cascade discrète au scroll.
    ========================================================================== */
 
 export const projectsSection = {
@@ -19,11 +21,13 @@ export function ProjectsGrid() {
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeader eyebrow={projectsSection.eyebrow} title={projectsSection.title} lead={projectsSection.lead} className="mx-auto text-center [&>p:first-child]:justify-center" />
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 md:gap-8">
+        <RevealGroup as="div" className="mt-14 grid gap-6 md:grid-cols-2 md:gap-8" stagger={0.1}>
           {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+            <RevealItem as="div" key={project.slug}>
+              <ProjectCard project={project} />
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
         <PagesPagination total={3} current={1} className="mt-14" />
       </div>

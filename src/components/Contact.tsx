@@ -4,10 +4,12 @@ import { CheckIcon, MailIcon, MapPinIcon, SendIcon } from '../lib/icons'
 import { SectionHeader } from './ui/SectionHeader'
 import { Button } from './ui/Button'
 import { StatusDot } from './ui/Badge'
+import { Reveal } from './ui/Reveal'
 
 /* ============================================================================
    Contact — formulaire simple (démo, sans backend) + coordonnées.
    Soumission -> état de confirmation inline, sans popup.
+   Les deux colonnes se révèlent au scroll.
    ========================================================================== */
 
 const inputClasses =
@@ -27,7 +29,7 @@ export function Contact() {
     <section id="contact" className="scroll-mt-24 bg-surface-sunken py-24 md:py-32">
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1fr_1.2fr] md:gap-16 md:px-8">
         {/* Présentation + coordonnées */}
-        <div>
+        <Reveal as="div" delay={0.05}>
           <SectionHeader eyebrow={contact.eyebrow} title={contact.title} lead={contact.lead} />
 
           <ul className="mt-10 flex flex-col gap-5">
@@ -50,10 +52,10 @@ export function Contact() {
               <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{contact.availability}</span>
             </li>
           </ul>
-        </div>
+        </Reveal>
 
         {/* Formulaire */}
-        <div className="rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
+        <Reveal as="div" delay={0.15} className="rounded-2xl border border-line bg-surface-raised p-7 shadow-paper md:p-9">
           {sent ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-4 text-center">
               <span className="flex size-14 items-center justify-center rounded-full bg-accent-soft text-accent">
@@ -98,7 +100,7 @@ export function Contact() {
               </Button>
             </form>
           )}
-        </div>
+        </Reveal>
       </div>
     </section>
   )

@@ -14,12 +14,15 @@ import { FieldFigure } from '../components/FieldFigure'
 import { Metric } from '../components/ui/Metric'
 import { Tag } from '../components/ui/Tag'
 import { ProjectNav } from '../components/ui/Pagination'
+import { Reveal, RevealGroup, RevealItem } from '../components/ui/Reveal'
 
 /* ============================================================================
    ProjectPage — gabarit d'étude de cas :
    fil d'Ariane -> en-tête (client, durée) -> grande image -> contexte ->
    objectifs -> solutions techniques -> résultats (métriques + graphique) ->
    outils utilisés -> navigation précédent/suivant.
+   Reveals au scroll (fade + léger translate-y) ; les listes à puces et les
+   encadrés de résultats entrent en cascade discrète.
    ========================================================================== */
 
 interface ChartBarProps {
@@ -69,7 +72,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
   return (
     <article className="bg-surface">
       {/* En-tête */}
-      <header className="border-b border-line bg-surface-sunken pb-12 pt-32 md:pb-16 md:pt-40">
+      <Reveal as="header" className="border-b border-line bg-surface-sunken pb-12 pt-32 md:pb-16 md:pt-40">
         <div className="mx-auto max-w-4xl px-5 md:px-8">
           <Breadcrumb
             items={[
@@ -105,82 +108,84 @@ export function ProjectPage({ slug }: ProjectPageProps) {
             </div>
           </dl>
         </div>
-      </header>
+      </Reveal>
 
       {/* Grande image */}
-      <figure className="relative">
+      <Reveal as="figure" className="relative">
         <FieldFigure variant={project.figure} className="h-[42vh] w-full md:h-[62vh]" />
         <figcaption className="mx-auto max-w-4xl px-5 py-4 md:px-8">
           <span className="legend text-ink-soft">{project.figureCaption}</span>
         </figcaption>
-      </figure>
+      </Reveal>
 
       <div className="mx-auto max-w-4xl px-5 pb-24 pt-6 md:px-8 md:pb-32">
         {/* Contexte */}
-        <section aria-labelledby="contexte">
+        <Reveal as="section" aria-labelledby="contexte">
           <p className="legend text-accent">01 — Contexte</p>
           <p id="contexte" className="mt-4 text-lg leading-relaxed text-ink md:text-xl">
             {project.contexte}
           </p>
-        </section>
+        </Reveal>
 
         {/* Objectifs */}
-        <section aria-labelledby="objectifs" className="mt-16">
+        <Reveal as="section" aria-labelledby="objectifs" className="mt-16">
           <p className="legend text-accent">02 — Objectifs</p>
           <h2 id="objectifs" className="mt-4 font-display text-2xl font-medium text-ink md:text-3xl">
             Ce que le projet devait résoudre
           </h2>
-          <ul className="mt-7 flex flex-col gap-4">
+          <RevealGroup as="ul" className="mt-7 flex flex-col gap-4" stagger={0.08}>
             {project.objectifs.map((o) => (
-              <li key={o} className="flex items-start gap-3.5 rounded-xl border border-line bg-surface-raised p-5 text-[15px] leading-relaxed text-ink">
+              <RevealItem as="li" key={o} className="flex items-start gap-3.5 rounded-xl border border-line bg-surface-raised p-5 text-[15px] leading-relaxed text-ink">
                 <CheckIcon className="mt-1 size-5 shrink-0 text-accent" />
                 {o}
-              </li>
+              </RevealItem>
             ))}
-          </ul>
-        </section>
+          </RevealGroup>
+        </Reveal>
 
         {/* Solutions */}
-        <section aria-labelledby="solutions" className="mt-16">
+        <Reveal as="section" aria-labelledby="solutions" className="mt-16">
           <p className="legend text-accent">03 — Solutions techniques</p>
           <h2 id="solutions" className="mt-4 font-display text-2xl font-medium text-ink md:text-3xl">
             Les choix de conception
           </h2>
-          <div className="mt-7 flex flex-col gap-4">
+          <RevealGroup as="div" className="mt-7 flex flex-col gap-4" stagger={0.08} delayChildren={0.1}>
             {project.solutions.map((s, i) => (
-              <p key={s} className="flex items-start gap-3.5 text-[15px] leading-relaxed text-ink-soft">
+              <RevealItem as="p" key={s} className="flex items-start gap-3.5 text-[15px] leading-relaxed text-ink-soft">
                 <span className="mt-0.5 font-mono text-sm tabular-nums text-accent">{String(i + 1).padStart(2, '0')}</span>
                 {s}
-              </p>
+              </RevealItem>
             ))}
-          </div>
-        </section>
+          </RevealGroup>
+        </Reveal>
 
         {/* Résultats */}
-        <section aria-labelledby="resultats" className="mt-16">
+        <Reveal as="section" aria-labelledby="resultats" className="mt-16">
           <p className="legend text-accent">04 — Résultats mesurés</p>
           <h2 id="resultats" className="mt-4 font-display text-2xl font-medium text-ink md:text-3xl">
             Des effets chiffrés
           </h2>
-          <div className="mt-8 grid gap-8 md:grid-cols-[1fr_1.15fr] md:items-start">
-            <div className="flex flex-col gap-6 rounded-2xl border border-line bg-surface-raised p-6 md:p-8">
+          <RevealGroup as="div" className="mt-8 grid gap-8 md:grid-cols-[1fr_1.15fr] md:items-start" stagger={0.12}>
+            <RevealItem as="div" className="flex flex-col gap-6 rounded-2xl border border-line bg-surface-raised p-6 md:p-8">
               {project.resultats.map((r) => (
                 <Metric key={r.label} value={r.value} label={r.label} detail={r.detail} />
               ))}
-            </div>
-            <ResultsChart data={project.chart} />
-          </div>
-        </section>
+            </RevealItem>
+            <RevealItem as="div">
+              <ResultsChart data={project.chart} />
+            </RevealItem>
+          </RevealGroup>
+        </Reveal>
 
         {/* Outils */}
-        <section aria-labelledby="outils" className="mt-16">
+        <Reveal as="section" aria-labelledby="outils" className="mt-16">
           <p className="legend text-accent">05 — Outils utilisés</p>
           <div className="mt-5 flex flex-wrap gap-2.5">
             {project.outils.map((tool) => (
               <Tag key={tool}>{tool}</Tag>
             ))}
           </div>
-        </section>
+        </Reveal>
 
         {/* Précédent / suivant */}
         <ProjectNav
